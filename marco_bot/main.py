@@ -3,7 +3,7 @@ import discord
 import random
 import wikipedia
 
-TOKEN = "MTAyODQ4MDI0NTQwMzIyNjExNA.GQSlNB.hemhaKRWJK2ipxDVE2WYu_leMq-NE1ao-zZD9M"
+TOKEN = #your token here
 
 client = discord.Client(intents=discord.Intents.all())
 
