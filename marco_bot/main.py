@@ -6,7 +6,7 @@ import wikipedia
 import requests
 from datetime import datetime
 
-TOKEN = "MTAyODQ4MDI0NTQwMzIyNjExNA.GGaa89.XE4AnLe9BIiHRXWZArWUVMJ2cUWOqrnAAMtWWw"
+TOKEN = "your_token_here"
 
 client = discord.Client(intents=discord.Intents.all())
 
@@ -52,6 +52,13 @@ elif changement == "12":
 fin = int(str(valeurs[0]) + str(valeurs[1]) + str(valeurs[2]))
 debut = int(str(valeurs[0]) + str(changement) + str(valeurs[2]))
 
+with open("animals.txt", "r") as file:
+    allText = file.read()
+    words = list(map(str, allText.split("\n")))
+  
+    # print random string
+    #print(random.choice(words))
+
 @client.event
 async def on_ready():
     print("connecte comme {0.user}".format(client))
@@ -69,7 +76,7 @@ async def on_message(message):
 
 
     if message.channel.name == "fr" or "test-bot" or "general":
-        if user_message.lower() == "ping" :
+        if user_message.lower() == "ping":
             await message.channel.send(f"pong")
             return  
         elif user_message.lower() == "!lance un dé" :
@@ -77,13 +84,13 @@ async def on_message(message):
             await message.channel.send(reponse)
             await message.channel.send(f"{random.randrange(1,6)}")
             return     
-        elif user_message.lower() == "non" :
+        elif user_message.lower() == "non" or user_message.endswith("non"):
             await message.channel.send(f"bril")
             return              
-        elif user_message.lower() == "oui" :
+        elif user_message.lower() == "oui" or user_message.endswith("oui") :
             await message.channel.send(f"stiti")
             return 
-        elif user_message.lower() == "quoi" :
+        elif user_message.lower() == "quoi" or user_message.endswith("quoi") or user_message.endswith("quoi?") or user_message.endswith("quoi ?"):
             await message.channel.send(f"feur")
             return 
         elif user_message.lower() == "allo" :
@@ -99,7 +106,7 @@ async def on_message(message):
 
         elif user_message.startswith("!views/"):
             articleNom = user_message.split("/")
-            wikipage = articleNom[1].capitalize()
+            wikipage = articleNom[1]
             resp = requests.get(f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/all-agents/{wikipage}/monthly/{debut}/{fin}", headers=headers)
             # print(resp.content)
             print (f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/all-agents/{wikipage}/monthly/{debut}/{fin}")
@@ -111,8 +118,29 @@ async def on_message(message):
 #todo enleverl les espaces
 
 
-        # elif user_message.lower == "jeu wikipédia":
-        #     await message.channel.send(f"Quelle est la page entre {} et {} qui a eu le plus de visites lors du denier mois ?")
+        elif user_message.lower() == "!jeu wikipedia":
+            x = random.choice(words)
+            y = random.choice(words)
+            await message.channel.send(f"Quelle est la page entre {random.choice(words)} et {random.choice(words)} qui a eu le plus de visites lors du denier mois ?")
+            resp = requests.get(f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/all-agents/{x}/monthly/{debut}/{fin}", headers=headers)
+            data = resp.json()
+            x1 = (data['items'][0]['views'])
+
+            resp = requests.get(f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/all-agents/{y}/monthly/{debut}/{fin}", headers=headers)
+            data = resp.json()
+            y1 = (data['items'][0]['views'])
+            
+            if user_message == x :
+                if x1<y1:
+                     await message.channel.send("nuuul")
+                if x1>y1:
+                    await message.channel.send("bien ouej")
+
+            if user_message == y :
+                if x1<y1:
+                     await message.channel.send("bien ouej")
+                if x1>y1:
+                    await message.channel.send("nuuul")
 
         # if message.author.id == 696776064113836112:
         #     words = ["Fanny", "Murielle", "Krystel", "Sarah", "Mattie"]
